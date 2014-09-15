@@ -2,11 +2,46 @@
 <html ng-app="codeBreaker">
     <head>
         <title>Code Breaker</title>
+        <style>
+            #game-board {
+                margin: 1em auto 1em auto;
+                padding: 2em;
+                border: 2px solid black;
+                max-width: 800px;
+            }
+            .peg-row {
+                margin: 0 auto;
+                text-align: center;
+            }
+            .game-peg {
+                width: 80px;
+                height: 80px;
+                border: 2px solid black;
+                border-radius: 1em;
+                display: inline-block;
+            }
+        </style>
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
+        <script>
+            angular.module('codeBreaker', [])
+            .controller('CodeBreakerController', ['$scope', function($scope) {
+                    $scope.colors = ["#8080B3","#499273","#D4A76A","#803315"];
+                    $scope.size = 3;
+                    $scope.cycle = function(color) {
+                        if ($scope.color < $scope.size) {
+                            $scope.color++;
+                        } else {
+                            $scope.color = 0;
+                        }
+                    }
+                    }]);
+        </script>
     </head>
+    <body>
+        <div ng-controller="CodeBreakerController" id="game-board">
+            <div class="peg-row">
+                <div ng-init="color=0" ng-click="this.cycle(color)" class="game-peg" style="background-color: {{this.colors[color]}}"></div>
+            </div>
+        </div>
     </body>
-    <script>
-        var app = angular.module('codeBreaker',[]);
-
-    </script>
 </html>

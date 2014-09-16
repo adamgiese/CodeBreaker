@@ -9,6 +9,9 @@
                 border: 2px solid black;
                 max-width: 800px;
             }
+            .current-turn {
+                margin-bottom: 2em;
+            }
             .peg-row {
                 margin: 0 auto;
                 text-align: center;
@@ -20,6 +23,11 @@
                 border-radius: 1em;
                 display: inline-block;
             }
+            .past-guess {
+                padding-top: 2em;
+                border-top: 2px dotted black;
+                margin: 0 20% 0 20%;
+            }
             #submit {
                 background-color: red;
                 width: 80px;
@@ -29,6 +37,23 @@
                 text-align: center;
                 margin: 0 auto;
                 
+            }
+            .all-right, .part-right, .empty-right {
+                width: 10px;
+                height: 10px;
+                border: 2px solid black;
+                border-radius: 1em;
+                text-align: center;
+                margin: 0 auto;
+            }
+            .all-right {
+                background-color: green;
+            }
+            .part-right {
+                background-color: blue;
+            }
+            .empty-right {
+                background-color: white;
             }
             .guess-answer {
                 text-align: center;
@@ -73,24 +98,33 @@
                         var turnChecker = guess.slice(0);
                         var answerChecker = $scope.pegAnswer.slice(0); 
                         var countLeft = turnChecker.length;
+                        var answerString = "";
                         numAllRight = 0;
                         numPartRight = 0;
                         for (i = 0; i < countLeft; i++) {
                             if (turnChecker[i] == answerChecker[i]) {
                                 numAllRight++;
-                                turnChecker.splice(i,1);
-                                answerChecker.splice(i,1);
                             }
                         }
-                        countLeft = turnChecker.length;
                         for (i = 0; i < countLeft; i++) {
-                            if (turnChecker.indexOf(answerChecker[i]) != -1) {
-                                answerChecker.splice(i,1);
-                                turnChecker.splice(turnChecker.indexOf(answerChecker[i]),1);
+                            if (turnChecker.indexOf(answerChecker[i]) != -1 && turnChecker[i] != answerChecker[i]) {
                                 numPartRight++;
-                                }
+                            }
                         }
-                        return "You have " + numAllRight + " fully correct and " + numPartRight + " partially correct.";
+                        if (numAllRight == 4) {
+                            alert("You won the game!");
+                        } else {
+                            for (i = 0; i < numAllRight; i++) {
+                                answerString += "X";
+                            }
+                            for (i = 0; i < numPartRight; i++) {
+                                answerString += "-";
+                            }
+                            for (i = numAllRight + numPartRight; i < $scope.sizeOfRow; i ++) {
+                                answerString += "O";
+                            }
+                        }
+                        return answerString;
                     }
                     
                     
@@ -99,18 +133,18 @@
     </head>
     <body>
         <div ng-app="codeBreaker" ng-init="initializeGame()" ng-controller="CodeBreakerController" id="game-board">
-            <div class="peg-row">
+            <div id="submit" ng-click="submit()"></div>
+            <div class="peg-row" style="display: none;">
                 <div ng-repeat="peg in pegAnswer track by $index" class="game-peg" style="background-color: {{colors[peg]}}"></div>
             </div>
             <div class="peg-row current-turn">
-                <div ng-repeat="peg in currentTurn track by $index" ng-click="cycle(peg, $index)" class="game-peg" style="background-color: {{colors[peg]}}"></div> 
+                <div ng-repeat="peg in currentTurn track by $index" ng-click="cycle(peg, $index)" class="game-peg current-turn" style="background-color: {{colors[peg]}}"></div> 
             </div>
-            <div ng-repeat="guess in pastTurns track by $index" class="peg-row">
+            <div ng-repeat="guess in pastTurns track by $index" class="peg-row past-guess">
                 <div ng-repeat="peg in guess track by $index" class="game-peg" style="background-color: {{colors[peg]}}"></div>
                 <div class="guess-answer">{{checkAnswer(guess)}}</div> 
             </div>
 
-            <div id="submit" ng-click="submit()"></div>
         </div>
     </body>
 </html>

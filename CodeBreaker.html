@@ -30,6 +30,9 @@
                 margin: 0 auto;
                 
             }
+            .guess-answer {
+                text-align: center;
+            }
         </style>
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
         <script>
@@ -66,16 +69,28 @@
                         $scope.initializeCurrentTurn();
                         $scope.calcAnswer();
                     }
-                    $scope.checkAnswer = function() {
-                        var turnChecker = $scope.currentTurn.slice(0);
+                    $scope.checkAnswer = function(guess) {
+                        var turnChecker = guess.slice(0);
                         var answerChecker = $scope.pegAnswer.slice(0); 
-                        numBlack = 0;
-                        numWhite = 0;
-                        for (i = 0; i < $scope.sizeOfRow; i++) {
+                        var countLeft = turnChecker.length;
+                        numAllRight = 0;
+                        numPartRight = 0;
+                        for (i = 0; i < countLeft; i++) {
                             if (turnChecker[i] == answerChecker[i]) {
-                                numBlack++;
+                                numAllRight++;
+                                turnChecker.splice(i,1);
+                                answerChecker.splice(i,1);
                             }
                         }
+                        countLeft = turnChecker.length;
+                        for (i = 0; i < countLeft; i++) {
+                            if (turnChecker.indexOf(answerChecker[i]) != -1) {
+                                answerChecker.splice(i,1);
+                                turnChecker.splice(turnChecker.indexOf(answerChecker[i]),1);
+                                numPartRight++;
+                                }
+                        }
+                        return "You have " + numAllRight + " fully correct and " + numPartRight + " partially correct.";
                     }
                     
                     
@@ -90,9 +105,11 @@
             <div class="peg-row current-turn">
                 <div ng-repeat="peg in currentTurn track by $index" ng-click="cycle(peg, $index)" class="game-peg" style="background-color: {{colors[peg]}}"></div> 
             </div>
-            <div class="peg-row" ng-repeat="guess in pastTurns track by $index" class="peg-row">
+            <div ng-repeat="guess in pastTurns track by $index" class="peg-row">
                 <div ng-repeat="peg in guess track by $index" class="game-peg" style="background-color: {{colors[peg]}}"></div>
+                <div class="guess-answer">{{checkAnswer(guess)}}</div> 
             </div>
+
             <div id="submit" ng-click="submit()"></div>
         </div>
     </body>

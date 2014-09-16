@@ -36,14 +36,13 @@
             angular.module('codeBreaker', [])
             .controller('CodeBreakerController', ['$scope', function($scope) {
                     $scope.colors = ["#8080B3","#499273","#D4A76A","#803315"];
-                    $scope.sizeOfRow = 6;
+                    $scope.sizeOfRow = 4;
                     $scope.currentTurn = [];
+                    $scope.pegAnswer = [];
                     $scope.initializeCurrentTurn = function() {
                         for (i = 0; i < $scope.sizeOfRow; i++) {
                             $scope.currentTurn[i] = 0;
-
                         }
-                        
                     }
                     $scope.pastTurns = [];
                     $scope.cycle = function(color, pegNum) {
@@ -58,17 +57,28 @@
                         toBePushed = $scope.currentTurn.slice(0);;
                         $scope.pastTurns.unshift(toBePushed);
                     }
-                    $scope.calcRandom = function() {
+                    $scope.calcAnswer = function() {
+                        for (i = 0; i < $scope.sizeOfRow; i++) {
+                            $scope.pegAnswer[i] = Math.floor(Math.random()*$scope.colors.length);
+                        }
                     }
+                    $scope.initializeGame = function() {
+                        $scope.initializeCurrentTurn();
+                        $scope.calcAnswer();
+                    }
+                    
                     }]);
         </script>
     </head>
     <body>
-        <div ng-app="codeBreaker" ng-init="initializeCurrentTurn()" ng-controller="CodeBreakerController" id="game-board">
-            <div class="peg-row current-turn">
+        <div ng-app="codeBreaker" ng-init="initializeGame()" ng-controller="CodeBreakerController" id="game-board">
+            <div class="peg-row">
+                <div ng-repeat="peg in pegAnswer track by $index" class="game-peg" style="background-color: {{colors[peg]}}"></div>
+            </div>
+            <div class="peg-row current-turn" style="display: none;">
                 <div ng-repeat="peg in currentTurn track by $index" ng-click="cycle(peg, $index)" class="game-peg" style="background-color: {{colors[peg]}}"></div> 
             </div>
-            <div class="peg-row" ng-repeat="guess in pastTurns track by $index" class="peg-row">
+            <div class="peg-row" ng-repeat="guess in pastTurns track by $index" class="peg-row" style="display: none;">
                 <div ng-repeat="peg in guess track by $index" class="game-peg" style="background-color: {{colors[peg]}}"></div>
             </div>
             <div id="submit" ng-click="submit()"></div>

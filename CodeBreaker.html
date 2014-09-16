@@ -20,6 +20,16 @@
                 border-radius: 1em;
                 display: inline-block;
             }
+            #submit {
+                background-color: red;
+                width: 80px;
+                height: 80px;
+                border: 2px solid black;
+                border-radius: 1em;
+                text-align: center;
+                margin: 0 auto;
+                
+            }
         </style>
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
         <script>
@@ -27,23 +37,32 @@
             .controller('CodeBreakerController', ['$scope', function($scope) {
                     $scope.colors = ["#8080B3","#499273","#D4A76A","#803315"];
                     $scope.size = 3;
+                    $scope.currentTurn = [0,0,0,0];
+                    $scope.pastTurns = [];
                     $scope.cycle = function(color) {
-                        if ($scope.color < $scope.size) {
-                            $scope.color++;
+                        if (color < $scope.colors.length - 1) {
+                            color++;
+                            return color;
                         } else {
-                            $scope.color = 0;
+                            return 0;
                         }
+                    }
+                    $scope.submit = function() {
+                        $scope.pastTurns.push($scope.currentTurn);
                     }
                     }]);
         </script>
     </head>
     <body>
         <div ng-controller="CodeBreakerController" id="game-board">
-            <div class="peg-row">
-                <div ng-init="color=0" ng-click="this.cycle(color)" class="game-peg" style="background-color: {{this.colors[color]}}"></div>
-                <div ng-init="color=0" ng-click="this.cycle(color)" class="game-peg" style="background-color: {{this.colors[color]}}"></div>
-                <div ng-init="color=0" ng-click="this.cycle(color)" class="game-peg" style="background-color: {{this.colors[color]}}"></div>
+            <div class="peg-row current-turn">
+                <div ng-repeat="peg in this.currentTurn track by $index" ng-click="peg = this.cycle(peg)" class="game-peg" style="background-color: {{this.colors[peg]}}"></div> 
             </div>
+            <div class="peg-row" ng-repeat="guess in this.pastTurns track by $index" class="peg-row">
+                <div ng-repeat="peg in this.guess track by $index" class="game-peg" style="background-color: {{this.colors[peg]}}"></div>
+            </div>
+
+            <div id="submit" ng-click="this.submit()">Submit</div>
         </div>
     </body>
 </html>

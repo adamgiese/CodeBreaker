@@ -38,7 +38,6 @@
                 border-radius: 1em;
                 text-align: center;
                 margin: 0 auto;
-                
             }
             .all-right, .part-right, .empty-right {
                 width: 10px;
@@ -65,7 +64,6 @@
         <script>
             angular.module('codeBreaker', [])
             .controller('CodeBreakerController', ['$scope', function($scope) {
-                    
                     $scope.colors = ["#8080B3","#499273","#D4A76A","#D46A6A","#8A458A", "#FFF4A8"];
                     $scope.sizeOfRow = 4;
                     $scope.guessesAllowed = 11;
@@ -131,9 +129,6 @@
                         }
                         return returnString;
                     }
-                    
-                    
-                    
                     }]);
         </script>
     </head>
@@ -147,7 +142,6 @@
                 <div ng-repeat="peg in guess track by $index" class="game-peg" style="background-color: {{colors[peg]}}"></div>
                 <div class="guess-answer">{{checkAnswer(guess)}}</div> 
             </div>
-
         </div>
     </body>
 </html>

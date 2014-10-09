@@ -65,7 +65,7 @@
             angular.module('codeBreaker', [])
             .controller('CodeBreakerController', ['$scope', function($scope) {
                     $scope.colors = ["#8080B3","#499273","#D4A76A","#D46A6A","#8A458A", "#FFF4A8"];
-                    $scope.sizeOfRow = 4;
+                    $scope.sizeOfRow = 1;
                     $scope.guessesAllowed = 11;
                     $scope.currentTurn = [];
                     $scope.pegAnswer = [];
@@ -74,6 +74,8 @@
                             $scope.currentTurn[i] = 0;
                         }
                     }
+                    $scope.numberOfWins;
+                    $scope.gameWon = false;
                     $scope.pastTurns = [];
                     $scope.cycle = function(color, pegNum) {
                         if (color < $scope.colors.length - 1) {
@@ -96,6 +98,11 @@
                     $scope.initializeGame = function() {
                         $scope.initializeCurrentTurn();
                         $scope.calcAnswer();
+                        if (localStorage.getItem("numberOfWins")) {
+                            $scope.numberOfWins = localStorage.getItem("numberOfWins");
+                        } else {
+                            $scope.numberOfWins = 0;
+                        }
                     }
                     $scope.checkAnswer = function(guess) {
                         if (!$scope.guessesAllowed) {
@@ -123,17 +130,24 @@
                             }
                         }
                         returnString = "Right: " + numAllRight + "  Partial: " + numPartRight;
-                        if (numAllRight == 4) {
-                            returnString = "You Won!!";
-                            alert("You Won!!");
+                        if (numAllRight == $scope.sizeOfRow) {
+                            $scope.gameOver();
+                            return "You Won!!";
                         }
                         return returnString;
+                    }
+                    $scope.gameOver = function() {
+                        if (!$scope.gameWon) {
+                            $scope.gameWon = true;
+                            localStorage.setItem("numberOfWins",$scope.numberOfWins++);
+                        }
                     }
                     }]);
         </script>
     </head>
     <body>
         <div ng-app="codeBreaker" ng-init="initializeGame()" ng-controller="CodeBreakerController" id="game-board">
+            <div id="wins">{{numberOfWins}}</div>
             <div id="submit" ng-click="submit()">{{guessesAllowed - 1}}</div>
             <div class="peg-row current-turn">
                 <div ng-repeat="peg in currentTurn track by $index" ng-click="cycle(peg, $index)" class="game-peg current-turn" style="background-color: {{colors[peg]}}"></div> 

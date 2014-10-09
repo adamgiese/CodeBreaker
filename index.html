@@ -139,7 +139,8 @@
                     $scope.gameOver = function() {
                         if (!$scope.gameWon) {
                             $scope.gameWon = true;
-                            localStorage.setItem("numberOfWins",$scope.numberOfWins++);
+                            $scope.numberOfWins++;
+                            localStorage.setItem("numberOfWins",$scope.numberOfWins);
                         }
                     }
                     }]);
